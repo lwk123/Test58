@@ -1,7 +1,6 @@
 #coding:utf-8
 #提供selenium的driver
 from selenium import webdriver
-from bs4 import BeautifulSoup
 import util.headerutil
 import util.proxyutil
 import sys

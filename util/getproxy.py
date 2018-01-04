@@ -13,7 +13,6 @@ import requests
 sys.path.append('..')
 # import util.mysql
 import util.mongodb
-import util.mailutil
 import util.driverutil
 import util.headerutil
 import random
@@ -79,7 +78,7 @@ def init():
 def get_ip_from_66ip(url):
     driver = util.driverutil.get_driver_without_proxy(url)
     time.sleep(5)
-    cur = util.mysql.cur
+    cur = util.mongodb.proxy_list
 
     count = 0
     while (driver is None or driver.page_source == '<html><head></head><body></body></html>'):
@@ -115,8 +114,8 @@ def get_ip_from_66ip(url):
 
 
 def init_next():
-    conn = util.mysql.conn
-    cur = util.mysql.cur
+    # conn = util.mysql.conn
+    cur = util.mongodb.proxy_list
     print "开始代理ip获取"
     url = 'http://www.xicidaili.com/nn/'
     driver = util.driverutil.get_driver_without_proxy(url)

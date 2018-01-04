@@ -12,6 +12,7 @@ item_info = ceshi['item_info']
 def get_links_from(channel,pages,who_sells=0):
     list_view = '{}pn{}/'.format(channel,str(pages))
     wb_data = requests.get(list_view)
+    requests.get()
     time.sleep(2)
     soup = BeautifulSoup(wb_data.text,'lxml')
     if soup.find('td','t'):
