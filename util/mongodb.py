@@ -8,6 +8,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-client = pymongo.MongoClient('localhost',27017)
-proxy = client['proxy']
-proxy_list = proxy['proxy_proxy']
+def connect():
+    client = pymongo.MongoClient('localhost',27017)
+    proxy = client['proxy']
+    proxy_list = proxy['proxy_list']
+    return proxy_list
+connect()

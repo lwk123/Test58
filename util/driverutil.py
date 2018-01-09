@@ -9,7 +9,7 @@ sys.setdefaultencoding('utf8')
 
 #自定义header
 def init_phantomjs_driver(*args, **kwargs):
-
+    driver = webdriver.PhantomJS(executable_path=r"F:/phantomjs-2.1.1-windows/bin/phantomjs.exe")
     for key, value in util.headerutil.get_header().iteritems():
         webdriver.DesiredCapabilities.PHANTOMJS['phantomjs.page.customHeaders.{}'.format(key)] = value
     #不加载图片

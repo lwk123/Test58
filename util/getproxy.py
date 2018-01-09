@@ -20,12 +20,11 @@ import random
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-
+cur = util.mongodb.connect()
 
 def init():
     # conn = util.mysql.conn
     # cur = util.mysql.cur
-    proxy_list = util.mongodb.proxy_list
     url = 'http://www.ip181.com/'
     driver = util.driverutil.get_driver(url)
     time.sleep(5)
@@ -39,7 +38,7 @@ def init():
         if(count > 10):
             break
         count += 1
-    proxy_list.drop()
+    cur.drop()
     #delete_sql = 'delete from ods_proxy'
     #cur.execute(delete_sql)
 
@@ -65,12 +64,12 @@ def init():
         #if(isusable(responsetime)=='success' and testavailable(ip+':'+port,protocol.lower())=='success'):
         if(protocol.find(",")>0):
             protocol = 'http'
-            addProxy(ip+':'+port, protocol.lower(), responsetime, proxy_list)
+            addProxy(ip+':'+port, protocol.lower(), responsetime, cur)
             protocol = 'https'
-            addProxy(ip + ':' + port, protocol.lower(), responsetime, proxy_list)
+            addProxy(ip + ':' + port, protocol.lower(), responsetime, cur)
         else:
             protocol = 'http'
-            addProxy(ip + ':' + port, protocol.lower(), responsetime, proxy_list)
+            addProxy(ip + ':' + port, protocol.lower(), responsetime, cur)
 
     #time.sleep(3)
 
@@ -78,7 +77,6 @@ def init():
 def get_ip_from_66ip(url):
     driver = util.driverutil.get_driver_without_proxy(url)
     time.sleep(5)
-    cur = util.mongodb.proxy_list
 
     count = 0
     while (driver is None or driver.page_source == '<html><head></head><body></body></html>'):
@@ -115,7 +113,7 @@ def get_ip_from_66ip(url):
 
 def init_next():
     # conn = util.mysql.conn
-    cur = util.mongodb.proxy_list
+
     print "开始代理ip获取"
     url = 'http://www.xicidaili.com/nn/'
     driver = util.driverutil.get_driver_without_proxy(url)
@@ -187,13 +185,13 @@ def whether_exist(ip,protocol):
     # util.mongodb.proxy_list.find({'ip':ip},{'protocol':protocol})
     # sql = "select id from ods_proxy where ip='%s' and protocol='%s'" % (ip,protocol)
     # util.mysql.cur.execute(sql)
-    results =  util.mongodb.proxy_list.find({'ip':ip},{'protocol':protocol})
+    results = cur.find({'ip':ip},{'protocol':protocol})
     if(len(results)>0):
         return True
     return False
 
 def deal_existing_proxy():
-    results = util.mongodb.proxy_list.find()
+    results = cur.find()
     # ids = '('
     for row in results:
         ip = row[0]
@@ -206,7 +204,7 @@ def deal_existing_proxy():
                 requests.get('https://www.ipip.net/', proxies={"https": "https://" + ip}, timeout=5)
         except:
             print '%s://%s connect failed' % (protocol, ip)
-            util.mongodb.proxy_list.delete_many({'ip':ip},{'protocol':protocol})
+            cur.delete_many({'ip':ip},{'protocol':protocol})
     # ids+='-1)'
     # print ids
     # util.mongodb.proxy_list.delete_many()
@@ -219,7 +217,7 @@ def main():
     # del_sql = "delete from ods_proxy"
     # util.mysql.cur.execute(del_sql)
     # util.mysql.conn.commit()
-    util.mongodb.proxy_list.drop()
+    cur.drop()
     init_next()
     for p in range(1, 3):
         get_ip_from_66ip("http://www.66ip.cn/%d.html" % p)
